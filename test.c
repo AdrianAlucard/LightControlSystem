@@ -2,31 +2,35 @@
 #include <Python.h>
 #include <stdlib.h>
 #include <stdio.h>
-void processPython(int, char**);
+void processPython(int, char**, char*, char*);
 /***************************************
  Constants to files and corresponding 
  functions
 *****************************************/
+char *automatedFile = "grove_light_sensor";
+char *fAuto = "LightSensor";
 
+char *blinkF = "grove_led_blink";
+char *fBlink = "blink";
 
 
 int main(int argc, char *argv[])
 {
-    processPython(argc, argv);
+    processPython(argc, argv, blinkF, fBlink);
     return 0;
 }
 
-void processPython(int argc, char *argv[]){
+void processPython(int argc, char *argv[], char *pfile, char *pfunction){
 PyObject *pName, *pModule, *pDict, *pFunc;
     PyObject *pArgs, *pValue;
     int i;
-
+    /*
     if (argc < 3) {
         fprintf(stderr,"Usage: call pythonfile funcname [args]\n");
         exit(1);
         //return 1;
     }
-
+    */
     Py_Initialize();
 
     PyRun_SimpleString("import sys"); 
@@ -34,14 +38,14 @@ PyObject *pName, *pModule, *pDict, *pFunc;
 
 
 
-    pName = PyString_FromString(argv[1]);
+    pName = PyString_FromString(pfile);
     /* Error checking of pName left out */
 
     pModule = PyImport_Import(pName);
     Py_DECREF(pName);
 
     if (pModule != NULL) {
-        pFunc = PyObject_GetAttrString(pModule, argv[2]);
+        pFunc = PyObject_GetAttrString(pModule, pfunction);
         /* pFunc is a new reference */
 
         if (pFunc && PyCallable_Check(pFunc)) {
@@ -76,14 +80,14 @@ PyObject *pName, *pModule, *pDict, *pFunc;
         else {
             if (PyErr_Occurred())
                 PyErr_Print();
-            fprintf(stderr, "Cannot find function \"%s\"\n", argv[2]);
+            fprintf(stderr, "Cannot find function \"%s\"\n", pfunction);
         }
         Py_XDECREF(pFunc);
         Py_DECREF(pModule);
     }
     else {
         PyErr_Print();
-        fprintf(stderr, "Failed to load \"%s\"\n", argv[1]);
+        fprintf(stderr, "Failed to load \"%s\"\n", pfile);
          exit(1);
         //return 1;
     }
