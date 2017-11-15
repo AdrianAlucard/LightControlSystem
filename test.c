@@ -2,6 +2,16 @@
 #include <Python.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <signal.h>
+#include <termios.h>
+
+/******************
+  Signal Handling 
+*******************/
+void sigHandler();
+void set_crmode();
+int tty_mode(int how);
+
 void processPython(int, char**, char*, char*);
 /***************************************
  Constants to files and corresponding 
@@ -16,10 +26,24 @@ char *fBlink = "blink";
 
 int main(int argc, char *argv[])
 {
+    //signal handling for interrupt 
+      tty_mode(0);       //save tty mode
+      set_crmode();      //set chr-by-chr mode
+      signal(SIGINT, sigHandler);
+
+    printf("\nWelcome to the Light Control System Prototype!!\n");
+    printf("This simple demo illustrates a basic UI for our system\n");
+    printf("");
+    //user input handling for now will use simple control loop
     processPython(argc, argv, blinkF, fBlink);
     return 0;
 }
 
+/*****************************************************************
+ This function processes and runs python scripts and functions that
+ are used to interact with grove pi. Will need to modify to send
+ data from Python to C.
+******************************************************************/
 void processPython(int argc, char *argv[], char *pfile, char *pfunction){
 PyObject *pName, *pModule, *pDict, *pFunc;
     PyObject *pArgs, *pValue;
@@ -93,4 +117,54 @@ PyObject *pName, *pModule, *pDict, *pFunc;
     }
     Py_Finalize();
 
+}
+
+/***************************************************************
+ purpose: put file descriptor 0 (i.e stdin) into chr-by-chr mode
+ method: use bits in termios 
+*****************************************************************/
+void set_crmode(){
+  struct termios ttystate;
+  
+  tcgetattr(0, &ttystate);           //read curr setting
+  ttystate.c_lflag      &=~ICANON;   //no buffering
+  ttystate.c_lflag     &=~ECHO;     //no echo either
+  ttystate.c_cc[VMIN]   = 1;         //get 1 char at a time
+  tcsetattr(0, TCSANOW, &ttystate);  //install settings
+}
+
+//how==0 => save current mode, how==1 => restore mode
+int tty_mode(int how){
+
+  static struct termios original_mode;
+  if(how==0)
+    tcgetattr(0, &original_mode);
+  else
+    return tcsetattr(0, TCSANOW, &original_mode);
+}
+
+/*******************************************************
+ Handle User Input when signal interrupt is triggered
+*******************************************************/
+void sigHandler(){
+  printf("\nExit Program? [y/n]");
+  int input;
+  //fix so that user does NOT have to hit enter
+  while(1){
+   switch(input = getchar() ){
+         case 'y':
+         case 'Y':
+            tty_mode(1);
+            putchar(input);
+            printf("\n");
+            exit(1);
+         case 'n':
+         case 'N':
+            putchar(input);
+            return;
+         default:
+            putchar(input);
+            return;
+   }
+ }
 }
