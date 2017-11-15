@@ -26,16 +26,46 @@ char *fBlink = "blink";
 
 int main(int argc, char *argv[])
 {
-    //signal handling for interrupt 
+    /**************************************
+     Signal handling for Crtl + C
+    **************************************/
       tty_mode(0);       //save tty mode
       set_crmode();      //set chr-by-chr mode
       signal(SIGINT, sigHandler);
 
     printf("\nWelcome to the Light Control System Prototype!!\n");
     printf("This simple demo illustrates a basic UI for our system\n");
+    printf("To interrupt a process please hit Ctrl+C\n\n");
     printf("");
+
     //user input handling for now will use simple control loop
-    processPython(argc, argv, blinkF, fBlink);
+    int input;
+    printf("Please Select from the following options (type in number of desired option):\n\n");
+    printf("1) AutoMode\n");
+    printf("2) BlinkMode\n");
+    printf("3) Adjust Brightness (Not yet available)\n");
+    printf("4) Quit\n");
+    while(1){
+        switch(input = getchar() ){
+            case '1':
+               processPython(argc, argv, automatedFile, fAuto);
+            case '2':
+               processPython(argc, argv, blinkF, fBlink);
+               exit(1);
+            case '3':
+               printf("\nOption is unavailable at this time. Please choose another option:");
+               continue;
+            case '4':
+               printf("\nThanks for using our system:) Goodbye!!!\n");
+               tty_mode(1);
+               exit(0);
+            default:
+              printf("\nInput not recognized. Please pick from available options:\n");
+              continue;
+   }
+ }
+
+   // processPython(argc, argv, blinkF, fBlink);
     return 0;
 }
 
