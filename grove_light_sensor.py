@@ -39,7 +39,7 @@ THE SOFTWARE.
 import time
 import grovepi
 
-def LightSensor
+def LightSensor():
     # Connect the Grove Light Sensor to analog port A0
     # SIG,NC,VCC,GND
     light_sensor = 0

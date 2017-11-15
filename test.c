@@ -1,3 +1,8 @@
+/*********************************************************
+ Authors: Adrian Ward-Manthey, Colin Parente
+ Purpose: Use Python library with C to control Grove Pi
+**********************************************************/
+
 #include <python2.7/Python.h>
 #include <Python.h>
 #include <stdlib.h>
@@ -23,6 +28,8 @@ char *fAuto = "LightSensor";
 char *blinkF = "grove_led_blink";
 char *fBlink = "blink";
 
+char *fadeSample = "led_fade";
+char *fFade = "Fade";
 
 int main(int argc, char *argv[])
 {
@@ -38,7 +45,11 @@ int main(int argc, char *argv[])
     printf("To interrupt a process please hit Ctrl+C\n\n");
     printf("");
 
-    //user input handling for now will use simple control loop
+    /***********************************************
+      Basic User Input Loop: 
+      Needs to hand interruptions by sending user 
+      back to menu.
+    ************************************************/
     int input;
     printf("Please Select from the following options (type in number of desired option):\n\n");
     printf("1) AutoMode\n");
@@ -53,8 +64,9 @@ int main(int argc, char *argv[])
                processPython(argc, argv, blinkF, fBlink);
                exit(1);
             case '3':
-               printf("\nOption is unavailable at this time. Please choose another option:");
-               continue;
+               processPython(argc, argv, fadeSample, fFade);
+               //printf("\nOption is unavailable at this time. Please choose another option:");
+               //continue;
             case '4':
                printf("\nThanks for using our system:) Goodbye!!!\n");
                tty_mode(1);
