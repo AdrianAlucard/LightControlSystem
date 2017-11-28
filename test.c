@@ -23,10 +23,13 @@ void processPython(int, char**, char*, char*);
  functions
 *****************************************/
 char *automatedFile = "grove_light_sensor";
-char *fAuto = "LightSensor";
+char *fAuto         = "LightSensor";
 
-char *blinkF = "grove_led_blink";
-char *fBlink = "blink";
+char *brightness    = "grove_bright";
+char *fBright       = "bright";
+
+char *blinkF        = "grove_led_blink";
+char *fBlink        = "blink";
 
 char *fadeSample = "led_fade";
 char *fFade = "Fade";
@@ -64,7 +67,7 @@ int main(int argc, char *argv[])
                processPython(argc, argv, blinkF, fBlink);
                exit(1);
             case '3':
-               processPython(argc, argv, fadeSample, fFade);
+               processPython(argc, argv, brightness, fBright);
                //printf("\nOption is unavailable at this time. Please choose another option:");
                //continue;
             case '4':
@@ -139,6 +142,7 @@ PyObject *pName, *pModule, *pDict, *pFunc;
                 Py_DECREF(pModule);
                 PyErr_Print();
                 fprintf(stderr,"Call failed\n");
+                tty_mode(1);
                 exit(1);
                 //return 1;
             }
@@ -154,6 +158,7 @@ PyObject *pName, *pModule, *pDict, *pFunc;
     else {
         PyErr_Print();
         fprintf(stderr, "Failed to load \"%s\"\n", pfile);
+        tty_mode(1);
          exit(1);
         //return 1;
     }
