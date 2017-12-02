@@ -32,7 +32,7 @@ THE SOFTWARE.
 import time
 import grovepi
 def bright():
-   
+    #allow user to adjust this later 
 
     # Connect the LED to digital port D5
     led = 3
@@ -40,7 +40,8 @@ def bright():
     grovepi.pinMode(led,"OUTPUT")
     time.sleep(1)
     i = 0
-    print("HERE")
+    grovepi.analogWrite(led,0)
+    grovepi.analogWrite(led1,0)
     while True:
         try:
             # Send PWM signal to LED
@@ -49,7 +50,7 @@ def bright():
             time.sleep(.01)
             i=i+1
             if(i==1023):
-                i=0
+                i=10
         except IOError:
             print("Error")
 

@@ -62,3 +62,4 @@ def blink
             break
         except IOError:		        # Print "Error" if communication error encountered
             print ("Error")
+blink()

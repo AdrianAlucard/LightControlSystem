@@ -22,7 +22,7 @@ void processPython(int, char**, char*, char*);
  Constants to files and corresponding 
  functions
 *****************************************/
-char *automatedFile = "grove_light_sensor";
+char *automatedFile = "Light";
 char *fAuto         = "LightSensor";
 
 char *brightness    = "grove_bright";
@@ -31,8 +31,10 @@ char *fBright       = "bright";
 char *blinkF        = "grove_led_blink";
 char *fBlink        = "blink";
 
-char *fadeSample = "led_fade";
-char *fFade = "Fade";
+
+
+char *Exit          = "grove_reset";
+char *fReset        = "Reset";
 
 int main(int argc, char *argv[])
 {
@@ -54,14 +56,16 @@ int main(int argc, char *argv[])
       back to menu.
     ************************************************/
     int input;
-    printf("Please Select from the following options (type in number of desired option):\n\n");
-    printf("1) AutoMode\n");
-    printf("2) BlinkMode\n");
-    printf("3) Adjust Brightness (Not yet available)\n");
-    printf("4) Quit\n");
+    
     while(1){
+       printf("Please Select from the following options (type in number of desired option):\n   \n");
+        printf("1) AutoMode\n");
+        printf("2) BlinkMode\n");
+        printf("3) Adjust Brightness (Not yet available)\n");
+        printf("4) Quit\n");
         switch(input = getchar() ){
             case '1':
+               printf("YOU CHOSE 1\n");
                processPython(argc, argv, automatedFile, fAuto);
             case '2':
                processPython(argc, argv, blinkF, fBlink);
@@ -80,7 +84,7 @@ int main(int argc, char *argv[])
    }
  }
 
-   // processPython(argc, argv, blinkF, fBlink);
+   
     return 0;
 }
 
@@ -196,7 +200,7 @@ int tty_mode(int how){
 void sigHandler(){
   printf("\nExit Program? [y/n]");
   int input;
-  //fix so that user does NOT have to hit enter
+  //need switch to go back to user input 
   while(1){
    switch(input = getchar() ){
          case 'y':
@@ -209,6 +213,9 @@ void sigHandler(){
          case 'N':
             putchar(input);
             return;
+         case 's':
+         case 'S':
+           //user input loop option
          default:
             putchar(input);
             return;
