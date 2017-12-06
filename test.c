@@ -71,6 +71,7 @@ int main(int argc, char *argv[])
             case '2':
                processPython(argc, argv, blinkF, fBlink);
                exit(1);
+            //call python code that interacts with ThingSpeak to get Brightness Settings
             case '3':
                processPython(argc, argv, brightness, fBright);
                //printf("\nOption is unavailable at this time. Please choose another option:");

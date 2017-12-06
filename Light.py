@@ -37,14 +37,32 @@ THE SOFTWARE.
 '''
 import signal
 import sys
-
+import httplib, urllib
 import time
 import grovepi
 #can only use grovepi.analogWrite(led, val) on ports 3,5,6,9
 def signal_handler(signal, frame):
         print('Automode Complete')
         sys.exit(0)
-        
+
+
+
+key = '8415EZVHOGGU1FPX' # Thingspeak channel to update
+
+#Report Raspberry Pi internal temperature to Thingspeak Channel
+def thingSpeak(watts):
+        params = urllib.urlencode({'field3': watts, 'key': key }) 
+        headers = {"Content-typZZe": "application/x-www-form-urlencoded","Accept": "text/plain"}
+        conn = httplib.HTTPConnection("api.thingspeak.com:80")
+        try:
+            conn.request("POST", "/update", params, headers)
+            response = conn.getresponse()
+            print response.status, response.reason
+            data = response.read()
+            conn.close()     
+        except:
+            print "connection failed"
+       
 def LightSensor():
     # Connect the Grove Light Sensor to analog port A0
     # SIG,NC,VCC,GND
@@ -54,36 +72,40 @@ def LightSensor():
     # SIG,NC,VCC,GND
     led = 5
     led2 = 3
-
+    led3 = 6
     # Turn on LED once sensor exceeds threshold resistance
     threshold = 10
 
     grovepi.pinMode(light_sensor,"INPUT")
     grovepi.pinMode(led,"OUTPUT")
     grovepi.pinMode(led2,"OUTPUT")
-    
+    grovepi.pinMode(led3,"OUTPUT")
+    i =1;
     while True:
         try:
             # Get sensor value
             sensor_value = grovepi.analogRead(light_sensor)
-
+            if(sensor_value <= 0):
+                sensor_value = 1
             # Calculate resistance of sensor in K
             resistance = (float)(1023 - sensor_value) * 10 / sensor_value
             brightness = 1023-sensor_value
+
+            #Calculate wattage
+            voltage = brightness * (5.0/1023.0)
+            watts   = voltage * 1.1                 #1 being 1 amp
             #gradually adjust brightness
             
             grovepi.analogWrite(led, brightness)
             grovepi.analogWrite(led2, brightness)
-            
-          #  if resistance > threshold:
-                # Send HIGH to switch on LED
-          #      grovepi.digitalWrite(led,1)
-       #     else:
-                # Send LOW to switch off LED
-           #     grovepi.digitalWrite(led,0)
+            grovepi.analogWrite(led3, brightness)
+            i = i + 1
+            if(i==500):
+                 thingSpeak(watts)
+                 i=1
 
-            print("sensor_value = %d resistance =%.2f brightness =%d" %(sensor_value,  resistance, brightness))
-            time.sleep(.5)
+            print("sensor_value = %d resistance =%.2f brightness =%d watts = %f" %(sensor_value,  resistance, brightness, watts))
+            #time.sleep(.5)
 
         except (IOError):
             print ("Error")
@@ -93,6 +115,4 @@ def LightSensor():
             
 LightSensor()
 
-#signal.signal(signal.SIGINT, signal_handler)
-#print('Press Ctrl+C')
-#signal.pause()
+
