@@ -66,19 +66,19 @@ def Light():
             brightness = 1023-sensor_value
             #gradually adjust brightness
             
-            grovepi.analogWrite(led, brightness)
-            grovepi.analogWrite(led2, brightness)
+           # grovepi.analogWrite(led, brightness)
+            #grovepi.analogWrite(led2, brightness)
             
-          #  if resistance > threshold:
+            if resistance > threshold:
                 # Send HIGH to switch on LED
-          #      grovepi.digitalWrite(led,1)
-       #     else:
+                grovepi.digitalWrite(led,1)
+            else:
                 # Send LOW to switch off LED
-           #     grovepi.digitalWrite(led,0)
+                grovepi.digitalWrite(led,0)
 
             print("sensor_value = %d resistance =%.2f brightness =%d" %(sensor_value,  resistance, brightness))
             time.sleep(.5)
 
-        except IOError:
+        except (IOError, TypeError):
             print ("Error")
 Light()

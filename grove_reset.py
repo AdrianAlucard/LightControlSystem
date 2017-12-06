@@ -3,12 +3,17 @@ import time
 import grovepi
 
 def Reset():
-    i=1
-    while i<9:
-        try:
-          grovepi.pinMode(i,"OUTPUT")
-          grovepi.digitalWrite(i, 1)           
-          i=i+1
-        except IOError:
-            print ("Error")
+    # turn off all leds
+    led1 = 3
+    led2 = 4
+    led3 = 5
+    try:
+        grovepi.pinMode(led1,"OUTPUT")
+        grovepi.digitalWrite(led1, 0)           
+        grovepi.pinMode(led2,"OUTPUT")
+        grovepi.digitalWrite(led2, 0)
+        grovepi.pinMode(led3,"OUTPUT")
+        grovepi.digitalWrite(led3, 0)       
+    except IOError:
+        print ("Error")
 Reset()

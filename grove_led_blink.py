@@ -35,7 +35,7 @@ THE SOFTWARE.
 
 import time
 from grovepi import *
-def blink
+def blink():
     # Connect the Grove LED to digital port D4
     led = 4
 

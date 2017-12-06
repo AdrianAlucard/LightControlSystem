@@ -4,7 +4,7 @@
 **********************************************************/
 
 #include <python2.7/Python.h>
-#include <Python.h>
+//#include <Python.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>
@@ -46,7 +46,6 @@ int main(int argc, char *argv[])
       signal(SIGINT, sigHandler);
 
     printf("\nWelcome to the Light Control System Prototype!!\n");
-    printf("This simple demo illustrates a basic UI for our system\n");
     printf("To interrupt a process please hit Ctrl+C\n\n");
     printf("");
 
@@ -65,7 +64,6 @@ int main(int argc, char *argv[])
         printf("4) Quit\n");
         switch(input = getchar() ){
             case '1':
-               printf("YOU CHOSE 1\n");
                processPython(argc, argv, automatedFile, fAuto);
             case '2':
                processPython(argc, argv, blinkF, fBlink);
@@ -97,13 +95,7 @@ void processPython(int argc, char *argv[], char *pfile, char *pfunction){
 PyObject *pName, *pModule, *pDict, *pFunc;
     PyObject *pArgs, *pValue;
     int i;
-    /*
-    if (argc < 3) {
-        fprintf(stderr,"Usage: call pythonfile funcname [args]\n");
-        exit(1);
-        //return 1;
-    }
-    */
+   
     Py_Initialize();
 
     PyRun_SimpleString("import sys"); 
@@ -208,6 +200,7 @@ void sigHandler(){
             tty_mode(1);
             putchar(input);
             printf("\n");
+            system("python grove_reset.py");
             exit(1);
          case 'n':
          case 'N':

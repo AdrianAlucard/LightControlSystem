@@ -39,7 +39,7 @@ THE SOFTWARE.
 import time
 import grovepi
 #can only use grovepi.analogWrite(led, val) on ports 3,5,6,9
-def Light():
+def LightSensor():
     # Connect the Grove Light Sensor to analog port A0
     # SIG,NC,VCC,GND
     light_sensor = 0
@@ -77,8 +77,9 @@ def Light():
            #     grovepi.digitalWrite(led,0)
 
             print("sensor_value = %d resistance =%.2f brightness =%d" %(sensor_value,  resistance, brightness))
-            time.sleep(.5)
+            #time.sleep(.5)
 
-        except IOError:
+        except (IOError, TypeError):
             print ("Error")
-Light()
+            
+LightSensor()
