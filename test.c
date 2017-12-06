@@ -62,9 +62,12 @@ int main(int argc, char *argv[])
         printf("2) BlinkMode\n");
         printf("3) Adjust Brightness (Not yet available)\n");
         printf("4) Quit\n");
+        //get input from thingspeak app
         switch(input = getchar() ){
             case '1':
-               processPython(argc, argv, automatedFile, fAuto);
+               system("python Light.py");
+               break;
+               //processPython(argc, argv, automatedFile, fAuto);
             case '2':
                processPython(argc, argv, blinkF, fBlink);
                exit(1);
@@ -74,6 +77,7 @@ int main(int argc, char *argv[])
                //continue;
             case '4':
                printf("\nThanks for using our system:) Goodbye!!!\n");
+               system("python grove_reset.py");
                tty_mode(1);
                exit(0);
             default:
@@ -171,7 +175,7 @@ void set_crmode(){
   
   tcgetattr(0, &ttystate);           //read curr setting
   ttystate.c_lflag      &=~ICANON;   //no buffering
-  ttystate.c_lflag     &=~ECHO;     //no echo either
+  ttystate.c_lflag      &=~ECHO;     //no echo either
   ttystate.c_cc[VMIN]   = 1;         //get 1 char at a time
   tcsetattr(0, TCSANOW, &ttystate);  //install settings
 }

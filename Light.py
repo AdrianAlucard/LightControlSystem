@@ -35,10 +35,16 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 '''
+import signal
+import sys
 
 import time
 import grovepi
 #can only use grovepi.analogWrite(led, val) on ports 3,5,6,9
+def signal_handler(signal, frame):
+        print('Automode Complete')
+        sys.exit(0)
+        
 def LightSensor():
     # Connect the Grove Light Sensor to analog port A0
     # SIG,NC,VCC,GND
@@ -77,9 +83,16 @@ def LightSensor():
            #     grovepi.digitalWrite(led,0)
 
             print("sensor_value = %d resistance =%.2f brightness =%d" %(sensor_value,  resistance, brightness))
-            #time.sleep(.5)
+            time.sleep(.5)
 
-        except (IOError, TypeError):
+        except (IOError):
             print ("Error")
+
+        except (KeyboardInterrupt):
+            signal.signal(signal.SIGINT, signal_handler)
             
 LightSensor()
+
+#signal.signal(signal.SIGINT, signal_handler)
+#print('Press Ctrl+C')
+#signal.pause()
